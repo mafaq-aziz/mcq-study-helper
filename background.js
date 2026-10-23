@@ -123,6 +123,23 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     sendResponse({ ok: true });
     return;
   }
+  if (msg.type === "SOLVE_SUBJECT") {
+    const tabId = sender.tab && sender.tab.id;
+    if (tabId == null) { sendResponse({ error: "no tab" }); return; }
+    (async () => {
+      try {
+        const stored = await chrome.storage.session.get(`a_${tabId}`);
+        const ans = stored[`a_${tabId}`] || {};
+        const cfg = await getConfig();
+        const results = await solveChunk(msg.questions, cfg);
+        for (const r of results) applyRow(r, ans, cfg);
+        await chrome.storage.session.set({ [`a_${tabId}`]: ans });
+        pushOutlines(tabId);
+        sendResponse({ results });
+      } catch (e) { sendResponse({ error: String(e) || "solve failed" }); }
+    })();
+    return true;
+  }
   if (msg.type === "GET_STATE") {
     getState(msg.tabId).then(sendResponse);
     return true;

@@ -40,6 +40,9 @@
   let lastTops = new Map();
   let onSoloStorage = null;
   let autoSubmitOnComplete = true;
+  let lastQuestionsMap = new Map();
+  let lastSubjectIndex = new Map();
+  let subjectCount = 0;
   const VANISH_CLS = "mcq-helper-vanish";
   const SOLO_BODY_CLS = "mcq-helper-solo";
 
@@ -51,6 +54,64 @@
     let h = 5381;
     for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
     return (h >>> 0).toString(36);
+  }
+
+  function buildSubjectIndex() {
+    lastSubjectIndex = new Map();
+    subjectCount = 0;
+    const roots = [...lastRoots.values()].filter(Boolean);
+    if (!roots.length) return;
+    const boundOf = new Map();
+    const bounds = new Set();
+    for (const r of roots) {
+      let b = null;
+      let n = r.parentElement;
+      while (n && n.nodeType === 1 && n !== document.documentElement) {
+        let cnt = 0;
+        for (const r2 of roots) if (n.contains(r2)) cnt++;
+        if (cnt >= 2) { b = n; break; }
+        n = n.parentElement;
+      }
+      if (!b) b = document.body;
+      boundOf.set(r, b);
+      bounds.add(b);
+    }
+    const boundList = [...bounds].sort((a, b) => {
+      const p = a.compareDocumentPosition(b);
+      return (p & Node.DOCUMENT_POSITION_PRECEDING) ? -1 : (p & Node.DOCUMENT_POSITION_FOLLOWING ? 1 : 0);
+    });
+    subjectCount = boundList.length;
+    for (const [hash, root] of lastRoots) {
+      if (!root) continue;
+      lastSubjectIndex.set(hash, boundList.indexOf(boundOf.get(root)));
+    }
+  }
+
+  async function solveSubject(si) {
+    const hashes = orderedHashes.filter((h) => (lastSubjectIndex.get(h) || 0) === si && !isAnswered(h));
+    if (!hashes.length) return;
+    const payload = hashes.map((h) => {
+      const q = lastQuestionsMap.get(h);
+      return q ? { id: q.hash, type: q.type, question: q.text, options: q.options.map((o) => o.text) } : null;
+    }).filter(Boolean);
+    if (!payload.length) return;
+    try {
+      setFocus(hashes[0]);
+      chrome.runtime.sendMessage({ type: "SOLVE_SUBJECT", questions: payload }, (res) => {
+        if (!res || !res.results) return;
+        for (const r of res.results) {
+          if (r.error) continue;
+          const els = lastOptionEls.get(r.hash) || [];
+          const idxs = Array.isArray(r.answerIndex) ? r.answerIndex : [r.answerIndex];
+          idxs.forEach((i) => selectOption(els[i]));
+          lastAnswers[r.hash] = { answerIndex: r.answerIndex, explanation: r.explanation || "" };
+          const firstEl = els[idxs[0]];
+          const isRadio = firstEl && firstEl.tagName === "INPUT" && firstEl.type === "radio";
+          if (!Array.isArray(r.answerIndex) || isRadio || allSelected(r.hash, r.answerIndex)) advanceFocus(r.hash);
+        }
+        applyOutlines(lastAnswers);
+      });
+    } catch (e) {}
   }
 
   const BLOCKY_RE =
@@ -850,6 +911,14 @@
         wrongFlash(el);
         return;
       }
+      const si = "asdfgh".indexOf((e.key || "").toLowerCase());
+      if (si >= 0) {
+        if (si < subjectCount) {
+          e.preventDefault();
+          solveSubject(si);
+        }
+        return;
+      }
       if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
         moveFocus(e.key === "ArrowDown" ? 1 : -1);
@@ -964,6 +1033,8 @@
     )
       focusHash = null;
     if (!focusHash && list.length) focusHash = list[0].hash;
+    lastQuestionsMap = new Map(list.map((q) => [q.hash, { hash: q.hash, type: q.type, text: q.text, options: q.options.map((o) => o.text) }]));
+    buildSubjectIndex();
     applyVisuals();
     return list.map((q, i) => ({
       index: i + 1,
