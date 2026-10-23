@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>FP Traps — should detect ZERO MCQs here</title>
+  <style>
+    .dropdown-menu { display: none; }
+    body { font: 16px system-ui, sans-serif; max-width: 640px; margin: 40px auto; }
+  </style>
+</head>
+<body>
+  <nav class="top-nav">
+    <a class="option-link" href="#home">Home</a>
+    <a class="option-link" href="#about">About</a>
+    <a class="option-link" href="#faq">FAQ</a>
+    <a class="option-link" href="#contact">Contact</a>
+  </nav>
+
+  <div class="dropdown">
+    <div class="dropdown-trigger">Select one</div>
+    <div class="dropdown-menu">
+      <div class="select-option">Option A</div>
+      <div class="select-option">Option B</div>
+      <div class="select-option">Option C</div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">How do I reset my password?</div>
+    <div class="faq-answer">Go to settings and click the reset link in your account page.</div>
+    <div class="faq-q">Where can I find receipts?</div>
+    <div class="faq-answer">Receipts are under billing history in your dashboard menu.</div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-option">Privacy</div>
+    <div class="footer-option">Terms</div>
+    <div class="footer-option">Cookies</div>
+  </footer>
+
+  <div aria-hidden="true" class="hidden-options">
+    <div class="option-item">Hidden choice 1</div>
+    <div class="option-item">Hidden choice 2</div>
+    <div class="option-item">Hidden choice 3</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>MCQ Study Helper — Options</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f1115;
+      --card: #171a21;
+      --border: #2a2f3a;
+      --text: #e6e9ef;
+      --muted: #9aa3b2;
+      --accent: #4f8cff;
+      --ok: #3fb950;
+      --err: #f85149;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f6f7f9;
+        --card: #fff;
+        --border: #d8dde6;
+        --text: #1b2330;
+        --muted: #5b6575;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 32px 16px;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.sub { color: var(--muted); margin: 0 0 24px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    label { display: block; font-weight: 600; margin: 12px 0 4px; }
+    label:first-child { margin-top: 0; }
+    input, select {
+      width: 100%;
+      font: inherit;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+    input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 0; }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .row { display: flex; gap: 10px; }
+    .row > div { flex: 1; }
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      font-weight: 600;
+    }
+    .check input { width: auto; }
+    .actions { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+    button {
+      font: inherit;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    button.secondary {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    #msg { font-size: 13px; }
+    #msg.ok { color: var(--ok); }
+    #msg.err { color: var(--err); }
+    .note { color: var(--muted); font-size: 12px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>MCQ Study Helper</h1>
+    <p class="sub">Answers and explanations only — never clicks or submits.</p>
+
+    <div class="card">
+      <label for="provider">Provider</label>
+      <select id="provider">
+        <option value="openrouter">OpenRouter</option>
+        <option value="ollama">Ollama (local, free)</option>
+        <option value="groq">Groq (fast, free tier)</option>
+        <option value="gemini">Google Gemini</option>
+        <option value="anthropic">Anthropic</option>
+        <option value="openai">OpenAI</option>
+        <option value="custom">Custom (OpenAI-compatible)</option>
+      </select>
+
+      <label for="apiKey">API key</label>
+      <input id="apiKey" type="password" autocomplete="off" spellcheck="false" />
+      <div class="hint" id="apiKeyHint">Not needed for Ollama. Otherwise stored locally in extension storage and sent only to the provider you choose.</div>
+
+      <div class="row">
+        <div>
+          <label for="model">Model</label>
+          <select id="model"></select>
+          <input id="modelCustom" type="text" placeholder="e.g. my-model-id" spellcheck="false" style="display:none" />
+          <div class="hint" id="modelHint">Auto-selected recommended model for this provider.</div>
+        </div>
+        <div id="baseUrlWrap" style="display:none">
+          <label for="baseUrl">Base URL</label>
+          <input id="baseUrl" placeholder="https://api.example.com/v1" spellcheck="false" />
+        </div>
+      </div>
+
+      <label for="maxBatch">Questions per request</label>
+      <input id="maxBatch" type="number" min="1" max="50" />
+      <div class="hint">Lower = more requests but less risk of truncation. Higher = fewer round-trips (faster).</div>
+
+      <div class="check">
+        <input id="autoSolve" type="checkbox" />
+        <label for="autoSolve" style="margin:0">Auto-solve when MCQs are detected</label>
+      </div>
+      <div class="check">
+        <input id="cacheEnabled" type="checkbox" />
+        <label for="cacheEnabled" style="margin:0">Cache answers for 48h (instant re-show)</label>
+      </div>
+
+      <div class="actions">
+        <button id="save">Save</button>
+        <button id="test" class="secondary">Test API</button>
+        <span id="msg"></span>
+      </div>
+    </div>
+
+    <p class="note">
+      Default: Groq + <code>openai/gpt-oss-120b</code> with your saved key (~2s per batch).
+      Alternatives: OpenRouter free models (need their key), Ollama runs fully offline on
+      <code>localhost:11434</code> (<code>ollama serve</code>).
+    </p>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

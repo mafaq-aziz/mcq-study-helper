@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Div-based Quiz — MCQ Helper Test</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+    .question-block { margin-bottom: 24px; border: 1px solid #ccc; border-radius: 8px; padding: 12px 16px; }
+    .option-item, .choice-cell, .answer-chip {
+      display: block; padding: 8px 12px; border: 1px solid #ddd;
+      border-radius: 6px; margin: 6px 0; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Div-based Quiz (no input elements)</h1>
+  <p>Clicks on options do nothing — this page only tests detection.</p>
+
+  <div class="question-block">
+    <p class="q-title">Which planet is known as the Red Planet?</p>
+    <div class="option-item">Venus</div>
+    <div class="option-item">Mars</div>
+    <div class="option-item">Jupiter</div>
+    <div class="option-item">Saturn</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q-title">Water boils at what temperature at sea level?</div>
+    <div class="options-wrap">
+      <div class="choice-cell">90 °C</div>
+      <div class="choice-cell">100 °C</div>
+      <div class="choice-cell">120 °C</div>
+    </div>
+  </div>
+
+  <p>Which one is a database language?</p>
+  <ul class="quiz-choices-wrap">
+    <li class="answer-chip">HTML</li>
+    <li class="answer-chip">CSS</li>
+    <li class="answer-chip">SQL</li>
+  </ul>
+</body>
+</html>

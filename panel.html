@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="panel.css" />
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <h1>MCQ Study Helper</h1>
+      <div class="header-actions">
+        <button id="refresh" class="ghost" title="Re-scan page">↻</button>
+        <button id="clear" class="ghost" title="Clear answers">✕</button>
+      </div>
+    </div>
+    <div class="meta">
+      <span id="counts">0 questions</span>
+      <span id="status"></span>
+    </div>
+    <div class="controls">
+      <label class="toggle">
+        <input type="checkbox" id="autoSolve" />
+        Auto-solve
+      </label>
+      <label class="toggle" title="Draw green outline around correct options on the page">
+        <input type="checkbox" id="outlineOn" />
+        Outline
+      </label>
+      <label
+        class="toggle"
+        title="Hide every question except the active one and enlarge it"
+      >
+        <input type="checkbox" id="soloMode" />
+        Solo
+      </label>
+      <label
+        class="toggle"
+        title="Automatically click Submit when the last MCQ is answered"
+      >
+        <input type="checkbox" id="autoSubmit" />
+        Auto-submit
+      </label>
+      <div class="right-controls">
+        <label class="slider-wrap" title="MCQ size — smaller fits more per screen">
+          <input type="range" id="density" min="2" max="13" step="1" value="12" />
+          <span id="densityVal">12px</span>
+        </label>
+        <button id="solve" class="primary">Solve all</button>
+      </div>
+    </div>
+  </header>
+  <main id="list"></main>
+  <footer id="footer"></footer>
+  <script src="panel.js"></script>
+</body>
+</html>

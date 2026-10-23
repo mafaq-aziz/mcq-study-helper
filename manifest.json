@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "MCQ Study Helper",
+  "version": "1.0.0",
+  "description": "Detects MCQs on a page, solves them via your LLM API, and shows answers + explanations in a side panel. Never clicks or submits.",
+  "permissions": ["sidePanel", "storage", "activeTab", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*", "file:///*"],
+  "optional_host_permissions": ["https://*/*", "http://*/*"],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_title": "MCQ Study Helper",
+    "default_popup": "popup.html"
+  },
+  "side_panel": { "default_path": "panel.html" },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ]
+}

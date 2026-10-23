@@ -1,0 +1,277 @@
+:root {
+  color-scheme: light dark;
+  --bg: #0f1115;
+  --card: #171a21;
+  --border: #2a2f3a;
+  --text: #e6e9ef;
+  --muted: #9aa3b2;
+  --accent: #4f8cff;
+  --ok: #3fb950;
+  --err: #f85149;
+  --warn: #d29922;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f7f9;
+    --card: #ffffff;
+    --border: #d8dde6;
+    --text: #1b2330;
+    --muted: #5b6575;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  --fs: 12px;
+  --card-py: calc(var(--fs) * 0.75);
+  --card-px: calc(var(--fs) * 0.9);
+  --card-gap: calc(var(--fs) * 0.7);
+  --opt-py: calc(var(--fs) * 0.35);
+  --opt-px: calc(var(--fs) * 0.55);
+  --explain-size: calc(var(--fs) * 0.9);
+  font: var(--fs) / 1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body.min-fs .explain {
+  display: none;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+#status {
+  color: var(--warn);
+}
+
+#status.ok {
+  color: var(--ok);
+}
+
+#status.err {
+  color: var(--err);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.right-controls select,
+.right-controls input[type="range"] {
+  font: inherit;
+  accent-color: var(--accent);
+}
+
+.right-controls input[type="range"] {
+  width: 72px;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  user-select: none;
+}
+
+#densityVal {
+  min-width: 28px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+button.primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+button.ghost {
+  padding: 4px 8px;
+}
+
+main {
+  padding: 8px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+.empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 32px 12px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: var(--card-py) var(--card-px);
+}
+
+.q-head {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.q-num {
+  color: var(--accent);
+  font-weight: 700;
+  flex: none;
+}
+
+.q-text {
+  font-weight: 600;
+}
+
+.opts {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.opts li {
+  padding: var(--opt-py) var(--opt-px);
+  border-radius: 6px;
+  border: 1px solid transparent;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+}
+
+.opts li.correct {
+  border-color: var(--ok);
+  color: var(--text);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+  font-weight: 600;
+}
+
+.opts li .mark {
+  flex: none;
+  color: var(--ok);
+}
+
+.explain {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: var(--explain-size);
+  border-left: 3px solid var(--border);
+  padding-left: 8px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.error {
+  margin-top: 8px;
+  color: var(--err);
+  font-size: 12px;
+}
+
+.pending {
+  margin-top: 8px;
+  color: var(--warn);
+  font-size: 12px;
+}
+
+footer {
+  padding: 0 12px 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+footer a {
+  color: var(--accent);
+}

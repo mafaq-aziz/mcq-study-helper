@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      margin: 0;
+      font: 13px system-ui, sans-serif;
+      width: 240px;
+      padding: 12px;
+    }
+    button {
+      width: 100%;
+      font: inherit;
+      font-weight: 600;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #4f8cff;
+      background: #4f8cff;
+      color: #fff;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    button.secondary {
+      background: transparent;
+      color: inherit;
+      border-color: #2a2f3a;
+    }
+    .note { color: #9aa3b2; font-size: 11px; margin: 0; }
+  </style>
+</head>
+<body>
+  <button id="openPanel">Open side panel</button>
+  <button id="openOptions" class="secondary">Options / API key</button>
+  <p class="note">Shows answers only. Does not click or submit.</p>
+  <script src="popup.js"></script>
+</body>
+</html>
