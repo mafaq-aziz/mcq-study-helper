@@ -793,11 +793,14 @@
         try { first.click(); } catch (err) {}
         clicked.add(first);
         flash(first);
-        const t0 = Date.now();
-        let confirmBtn = null;
-        while (!confirmBtn && Date.now() - t0 < 2000) {
-          confirmBtn = findSubmitBtn(clicked, true);
-          if (!confirmBtn) await sleep(50);
+        // confirm button appears right after the first submit on many sites
+        let confirmBtn = findSubmitBtn(clicked, true);
+        if (!confirmBtn) {
+          const t0 = Date.now();
+          while (!confirmBtn && Date.now() - t0 < 2000) {
+            confirmBtn = findSubmitBtn(clicked, true);
+            if (!confirmBtn) await sleep(50);
+          }
         }
         if (confirmBtn) {
           try { confirmBtn.click(); } catch (err) {}
@@ -925,7 +928,8 @@
         return;
       }
       if (e.key === "Enter") {
-        const first = findSubmitBtn(null, false);
+        let first = findSubmitBtn(null, false);
+        if (!first) first = findSubmitBtn(null, true);
         if (first) runSubmitSequence(first, e);
       }
   };
