@@ -736,9 +736,9 @@
   }
 
   const SUBMIT_STRICT =
-    /^(submit|confirm|finish|finali[sz]e|lock\s*in|save\s*(answer|progress)|جاری|تصدیق|جمع)/i;
+    /^(submit|confirm|finish|finali[sz]e|lock\s*in|save\s*(answer|progress)|send|next|proceed|done|save|continue|جاری|تصدیق|جمع|ثبت|ارسال|تائید|تایید|آگے|ok|yes)/i;
   const SUBMIT_LOOSE =
-    /^(submit|confirm|yes|ok|done|proceed|continue|finish|finali[sz]e|verify|agree|accept|جاری|تصدیق|جمع|اجازت|تائید|قفل|بند)/i;
+    /^(submit|confirm|yes|ok|done|proceed|continue|finish|finali[sz]e|verify|agree|accept|send|next|save|go|جاری|تصدیق|جمع|اجازت|تائید|تایید|ثبت|ارسال|آگے|next|ok|yes)/i;
   const DIALOG_SEL =
     '[role="dialog"],dialog,.modal,[class*="modal" i],[class*="popup" i],[class*="dialog" i]';
 
@@ -746,7 +746,7 @@
     try {
       const cands = [];
       for (const el of document.querySelectorAll(
-        'button,input[type="submit"],[role="button"]'
+        'button,input[type="submit"],[role="button"],a[href]:not([href^="mailto"]):not([href^="tel"]):not([href^="javascript"])'
       )) {
         if (exclude && exclude.has(el)) continue;
         if (el.disabled) continue;
