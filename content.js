@@ -795,7 +795,7 @@
         flash(first);
         const t0 = Date.now();
         let confirmBtn = null;
-        while (!confirmBtn && Date.now() - t0 < 1000) {
+        while (!confirmBtn && Date.now() - t0 < 2000) {
           confirmBtn = findSubmitBtn(clicked, true);
           if (!confirmBtn) await sleep(50);
         }
