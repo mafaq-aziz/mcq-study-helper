@@ -1034,8 +1034,8 @@
       focusHash = null;
     if (!focusHash && list.length) focusHash = list[0].hash;
     lastQuestionsMap = new Map(list.map((q) => [q.hash, { hash: q.hash, type: q.type, text: q.text, options: q.options.map((o) => o.text) }]));
-    buildSubjectIndex();
-    applyVisuals();
+    try { buildSubjectIndex(); } catch (e) { lastSubjectIndex = new Map(); subjectCount = 0; }
+    try { applyVisuals(); } catch (e) {}
     return list.map((q, i) => ({
       index: i + 1,
       hash: q.hash,
