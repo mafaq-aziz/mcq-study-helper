@@ -691,16 +691,18 @@
   function selectOption(el) {
     if (!el || el.disabled) return false;
     try {
-      el.click();
-    } catch (e) {
-      return false;
-    }
-    // some sites don't register programmatic clicks on custom-styled inputs
+      const lbl = el.labels && el.labels[0];
+      if (lbl && lbl !== document.body) {
+        lbl.click();
+      } else {
+        el.click();
+      }
+    } catch (e) {}
     try {
       if ((el.type === "radio" || el.type === "checkbox") && !el.checked) {
         el.checked = true;
         el.dispatchEvent(new Event("change", { bubbles: true }));
-        el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
       }
     } catch (e) {}
     flash(el);
@@ -888,17 +890,7 @@
         if (!el) return;
         e.preventDefault();
         if (selectOption(el)) {
-          const row = lastAnswers[focusHash];
-          const ans =
-            row && !row.error && row.answerIndex != null
-              ? row.answerIndex
-              : null;
-          const shouldAdvance =
-            ans == null ||
-            !outlineEnabled ||
-            !Array.isArray(ans) ||
-            allSelected(focusHash, ans.map(Number));
-          if (shouldAdvance) advanceFocus(focusHash);
+          advanceFocus(focusHash);
           if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
         }
         return;

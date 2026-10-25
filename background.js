@@ -566,7 +566,7 @@ async function solveChunk(questions, cfg) {
       id: q.id || q.hash,
       type: q.type,
       question: q.question || q.text,
-      options: q.options.map((o, i) => `${i}) ${o.text || o.text}`),
+      options: q.options.map((o, i) => `${i}) ${typeof o === "string" ? o : (o.text || o)}`),
     }));
     const nonLatin = questions.some(hasArabicText);
     const schema = nonLatin
