@@ -560,13 +560,13 @@ function looseOptionIndex(text, options) {
 }
 
 async function solveChunk(questions, cfg) {
-  for (const q of questions) pending.add(q.hash);
+  for (const q of questions) pending.add(q.id || q.hash);
   try {
     const payload = questions.map((q) => ({
-      id: q.hash,
+      id: q.id || q.hash,
       type: q.type,
-      question: q.text,
-      options: q.options.map((o, i) => `${i}) ${o.text}`),
+      question: q.question || q.text,
+      options: q.options.map((o, i) => `${i}) ${o.text || o.text}`),
     }));
     const nonLatin = questions.some(hasArabicText);
     const schema = nonLatin

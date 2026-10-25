@@ -78,9 +78,16 @@
     }
     const boundList = [...bounds].sort((a, b) => {
       const p = a.compareDocumentPosition(b);
-      return (p & Node.DOCUMENT_POSITION_PRECEDING) ? -1 : (p & Node.DOCUMENT_POSITION_FOLLOWING ? 1 : 0);
+      // compareDocumentPosition describes `b` relative to `a`
+      if (p & Node.DOCUMENT_POSITION_PRECEDING) return 1; // b is before a → a comes after
+      if (p & Node.DOCUMENT_POSITION_FOLLOWING) return -1; // b is after a → a comes first
+      return 0;
     });
     subjectCount = boundList.length;
+    if (subjectCount === 0 && roots.length) {
+      subjectCount = 1;
+      boundList = [document.body];
+    }
     for (const [hash, root] of lastRoots) {
       if (!root) continue;
       lastSubjectIndex.set(hash, boundList.indexOf(boundOf.get(root)));
@@ -688,6 +695,14 @@
     } catch (e) {
       return false;
     }
+    // some sites don't register programmatic clicks on custom-styled inputs
+    try {
+      if ((el.type === "radio" || el.type === "checkbox") && !el.checked) {
+        el.checked = true;
+        el.dispatchEvent(new Event("change", { bubbles: true }));
+        el.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+      }
+    } catch (e) {}
     flash(el);
     return true;
   }
@@ -872,46 +887,20 @@
         const el = els && els[idx];
         if (!el) return;
         e.preventDefault();
-        const row = lastAnswers[focusHash];
-        const ans =
-          row && !row.error && row.answerIndex != null
-            ? row.answerIndex
-            : null;
-        if (ans == null || !outlineEnabled) {
-          if (selectOption(el)) {
-            advanceFocus(focusHash);
-            if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
-          }
-          return;
+        if (selectOption(el)) {
+          const row = lastAnswers[focusHash];
+          const ans =
+            row && !row.error && row.answerIndex != null
+              ? row.answerIndex
+              : null;
+          const shouldAdvance =
+            ans == null ||
+            !outlineEnabled ||
+            !Array.isArray(ans) ||
+            allSelected(focusHash, ans.map(Number));
+          if (shouldAdvance) advanceFocus(focusHash);
+          if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
         }
-        const idxs = (Array.isArray(ans) ? ans : [ans]).map(Number);
-        if (idxs.indexOf(idx) !== -1) {
-          if (selectOption(el)) {
-            const firstEl = els[idxs[0]];
-            const isRadio =
-              firstEl && firstEl.tagName === "INPUT" && firstEl.type === "radio";
-            if (!Array.isArray(ans) || isRadio || allSelected(focusHash, idxs))
-              advanceFocus(focusHash);
-            if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
-          }
-          return;
-        }
-        const wkey = focusHash + ":" + idx;
-        const now = Date.now();
-        if (
-          lastWrongPress &&
-          lastWrongPress.key === wkey &&
-          now - lastWrongPress.ts < 1500
-        ) {
-          lastWrongPress = null;
-          if (selectOption(el)) {
-            advanceFocus(focusHash);
-            if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
-          }
-          return;
-        }
-        lastWrongPress = { key: wkey, ts: now };
-        wrongFlash(el);
         return;
       }
       const si = "asdfgh".indexOf((e.key || "").toLowerCase());
