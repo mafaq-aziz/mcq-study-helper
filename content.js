@@ -13,7 +13,6 @@
     "style",
     "hidden",
     "value",
-    "checked",
     "selected",
     "aria-checked",
     "aria-selected",
@@ -40,6 +39,7 @@
   let lastTops = new Map();
   let onSoloStorage = null;
   let autoSubmitOnComplete = true;
+  let programmaticClick = false;
   let lastQuestionsMap = new Map();
   let lastSubjectIndex = new Map();
   let subjectCount = 0;
@@ -690,6 +690,7 @@
 
   function selectOption(el) {
     if (!el || el.disabled) return false;
+    programmaticClick = true;
     try {
       const lbl = el.labels && el.labels[0];
       if (lbl && lbl !== document.body) {
@@ -698,6 +699,7 @@
         el.click();
       }
     } catch (e) {}
+    programmaticClick = false;
     try {
       if ((el.type === "radio" || el.type === "checkbox") && !el.checked) {
         el.checked = true;
@@ -865,7 +867,7 @@
         }
       }
     }
-    if (matched && e.isTrusted && autoSubmitOnComplete && allQuestionsAnswered())
+    if (matched && e.isTrusted && !programmaticClick && autoSubmitOnComplete && allQuestionsAnswered())
       triggerAutoSubmit();
   };
   document.addEventListener("click", onClickCapture, true);
@@ -889,10 +891,29 @@
         const el = els && els[idx];
         if (!el) return;
         e.preventDefault();
-        if (selectOption(el)) {
-          advanceFocus(focusHash);
-          if (e.isTrusted && autoSubmitOnComplete) triggerAutoSubmit();
+        const row = lastAnswers[focusHash];
+        const ans =
+          row && !row.error && row.answerIndex != null
+            ? row.answerIndex
+            : null;
+        if (ans == null || !outlineEnabled) {
+          if (selectOption(el)) {
+            advanceFocus(focusHash);
+          }
+          return;
         }
+        const idxs = (Array.isArray(ans) ? ans : [ans]).map(Number);
+        if (idxs.indexOf(idx) !== -1) {
+          if (selectOption(el)) {
+            const firstEl = els[idxs[0]];
+            const isRadio =
+              firstEl && firstEl.tagName === "INPUT" && firstEl.type === "radio";
+            if (!Array.isArray(ans) || isRadio || allSelected(focusHash, idxs))
+              advanceFocus(focusHash);
+          }
+          return;
+        }
+        wrongFlash(el);
         return;
       }
       const si = "asdfgh".indexOf((e.key || "").toLowerCase());
